@@ -1,28 +1,70 @@
-const express = require('express');
+// module.exports = router;
+const express = require("express");
 const router = express.Router();
-const { handleRegister, handleLogin, getProfile } = require('../controllers/userController')
-const authenticateToken = require('../middlewares/authMiddleware')
+const multer = require("multer");
+
 const {
-    createProduct,
-    getAllProducts,
-    getProductById,
-    updateProduct,
-    deleteProduct
-} = require('../controllers/productController');
-router.use(express.json());
+  handleRegister,
+  handleLogin,
+  getProfile,
+} = require("../controllers/userController");
 
-router.get('/', (req, res) => {
-    res.send("Home Page")
-})
+const authenticateToken = require("../middlewares/authMiddleware");
 
-router.post('/api/register', handleRegister);
-router.post('/api/login', handleLogin);
-router.get('/api/profile', authenticateToken, getProfile);
+const productController = require("../controllers/productController");
 
-router.post('/api/products', createProduct);
-router.get('/api/products', authenticateToken, getAllProducts);
-router.get('/api/products/:id', authenticateToken, getProductById);
-router.put('/api/products/:id', updateProduct);
-router.delete('/api/products/:id', authenticateToken, deleteProduct);
+// Multer config
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    const uniqueName = Date.now() + "-" + file.originalname;
+    cb(null, uniqueName);
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// Auth routes
+router.post("/api/register", handleRegister);
+router.post("/api/login", handleLogin);
+router.get("/api/profile", authenticateToken, getProfile);
+
+// Product routes
+router.post(
+  "/api/products",
+  upload.single("image"),
+  productController.createProduct
+);
+
+router.get(
+  "/api/products",
+  authenticateToken,
+  productController.getAllProducts
+);
+
+router.get(
+  "/api/products/:id",
+  authenticateToken,
+  productController.getProductById
+);
+
+router.put(
+  "/api/products/:id",
+  upload.single("image"),
+  productController.updateProduct
+);
+
+router.delete(
+  "/api/products/:id",
+  authenticateToken,
+  productController.deleteProduct
+);
+
+// Home
+router.get("/", (req, res) => {
+  res.send("Home Page");
+});
 
 module.exports = router;
