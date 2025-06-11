@@ -101,7 +101,9 @@ const getAllProducts = async (req, res) => {
     const search = req.query.search || "";
     const regex = new RegExp(search, "i"); // không phân biệt hoa thường
 
-    const products = await Product.find({ name: { $regex: regex } });
+    const products = await Product.find({
+      $or: [{ name: { $regex: regex } }, { description: { $regex: regex } }],
+    });
     res.json(products);
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -10,7 +10,7 @@ connectDB();
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(webRoutes);
+app.use("/", webRoutes);
 app.use("/uploads", express.static("uploads"));
 
 app.listen(5000, () => {

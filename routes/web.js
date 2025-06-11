@@ -12,6 +12,7 @@ const {
 const authenticateToken = require("../middlewares/authMiddleware");
 
 const productController = require("../controllers/productController");
+const orderController = require("../controllers/orderController");
 
 // Multer config
 const storage = multer.diskStorage({
@@ -61,6 +62,10 @@ router.delete(
   authenticateToken,
   productController.deleteProduct
 );
+
+router.post("/api/orders", authenticateToken, orderController.createOrder);
+router.get("/api/orders", authenticateToken, orderController.getAllOrders);
+router.put("/api/orders/:id", authenticateToken, orderController.updateOrder);
 
 // Home
 router.get("/", (req, res) => {
