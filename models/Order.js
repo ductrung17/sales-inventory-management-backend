@@ -10,8 +10,8 @@ const orderSchema = new mongoose.Schema(
       country: { type: String, default: "Vietnam" },
     },
     totalAmount: { type: Number, required: true },
-    date: { type: Date, default: Date.now },
-    deliveryDeadline: { type: Date },
+    date: { type: Date, default: Date.now, required: true },
+    deliveryDeadline: { type: Date, required: true },
     items: [
       {
         productId: {
@@ -23,7 +23,11 @@ const orderSchema = new mongoose.Schema(
         price: { type: Number, required: true },
       },
     ],
-
+    status: {
+      type: String,
+      enum: ["Đang xử lý", "Đã hoàn thành", "Đã hủy"],
+      default: "Đang xử lý",
+    },
     deliveryStatus: {
       type: String,
       enum: ["Đang xử lý", "Đã gửi hàng", "Giao thành công", "Trả hàng"],

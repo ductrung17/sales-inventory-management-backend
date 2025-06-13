@@ -1,4 +1,3 @@
-const Product = require("../models/Product");
 const Order = require("../models/Order");
 
 const createOrder = async (req, res) => {
@@ -40,8 +39,20 @@ const createOrder = async (req, res) => {
 
 const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate("items.productId");
-    res.status(200).json(orders);
+    const search = req.query.search || "";
+    const regex = new RegExp(search, "i"); // không phân biệt hoa thường
+
+    const orders = await Order.find({
+      $or: [
+        { orderNumber: { $regex: regex } },
+        { customerName: { $regex: regex } },
+        { "shippingAddress.street": { $regex: regex } },
+        { "shippingAddress.city": { $regex: regex } },
+        { "shippingAddress.country": { $regex: regex } },
+      ],
+    });
+
+    res.json(orders);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -60,4 +71,34 @@ const updateOrder = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, getAllOrders, updateOrder };
+const getDeliveryStatus = (req, res) => {
+  const deliveryStatusEnum = Order.schema.path("deliveryStatus").enumValues;
+  res.json(deliveryStatusEnum);
+};
+const getStatus = (req, res) => {
+  const statusEnum = Order.schema.path("status").enumValues;
+  res.json(statusEnum);
+};
+
+const getOrderById = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+    }
+
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ message: "Lỗi server khi lấy đơn hàng" });
+  }
+};
+
+module.exports = {
+  createOrder,
+  getAllOrders,
+  updateOrder,
+  getDeliveryStatus,
+  getStatus,
+  getOrderById,
+};

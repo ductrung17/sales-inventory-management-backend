@@ -13,6 +13,7 @@ const authenticateToken = require("../middlewares/authMiddleware");
 
 const productController = require("../controllers/productController");
 const orderController = require("../controllers/orderController");
+const paymentController = require("../controllers/paymentController");
 
 // Multer config
 const storage = multer.diskStorage({
@@ -63,9 +64,31 @@ router.delete(
   productController.deleteProduct
 );
 
-router.post("/api/orders", authenticateToken, orderController.createOrder);
+router.post("/api/orders", orderController.createOrder);
 router.get("/api/orders", authenticateToken, orderController.getAllOrders);
 router.put("/api/orders/:id", authenticateToken, orderController.updateOrder);
+router.get("/api/delivery-statuses", orderController.getDeliveryStatus);
+router.get("/api/statuses", orderController.getStatus);
+// router.get("api/:id", orderController.getOrderById);
+
+router.get(
+  "/api/payments",
+  authenticateToken,
+  paymentController.getAllPaymentsWithOrder
+);
+router.get("/api/payment-method", paymentController.getPaymentMethod);
+router.get("/api/payment-statuses", paymentController.getStatus);
+router.post("/api/payments", paymentController.createPayment);
+router.put(
+  "/api/payments/:id",
+  authenticateToken,
+  paymentController.updatePayment
+);
+router.delete(
+  "/api/payments/:id",
+  authenticateToken,
+  paymentController.deletePayment
+);
 
 // Home
 router.get("/", (req, res) => {

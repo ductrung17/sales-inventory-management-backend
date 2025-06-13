@@ -2,17 +2,20 @@ const mongoose = require("mongoose");
 
 const paymentSchema = new mongoose.Schema(
   {
-    customerName: { type: String, required: true },
     order: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Order",
       required: true,
     },
-    date: { type: Date, default: Date.now },
     status: {
       type: String,
-      enum: ["Chưa thanh toán", "Đã hoàn thành"],
+      enum: ["Chưa thanh toán", "Đã thanh toán"],
       default: "Chưa thanh toán",
+    },
+    paymentMethod: {
+      type: String,
+      enum: ["Chuyển khoản", "Thanh toán khi nhận hàng"],
+      default: "Thanh toán khi nhận hàng",
     },
   },
   { timestamps: true }
