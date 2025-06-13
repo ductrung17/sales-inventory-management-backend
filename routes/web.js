@@ -7,15 +7,16 @@ const {
   handleRegister,
   handleLogin,
   getProfile,
-} = require("../controllers/userController");
+} = require("../controllers/authController");
 
-const authenticateToken = require("../middlewares/authMiddleware");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 const productController = require("../controllers/productController");
 const orderController = require("../controllers/orderController");
 const paymentController = require("../controllers/paymentController");
 const reportController = require("../controllers/reportController");
 const dashboardController = require("../controllers/dashboardController");
+const userController = require("../controllers/userController");
 
 // Multer config
 const storage = multer.diskStorage({
@@ -33,7 +34,7 @@ const upload = multer({ storage: storage });
 // Auth routes
 router.post("/api/register", handleRegister);
 router.post("/api/login", handleLogin);
-router.get("/api/profile", authenticateToken, getProfile);
+router.get("/api/profile", authMiddleware.authenticateToken, getProfile);
 
 // Product routes
 router.post(
@@ -44,13 +45,13 @@ router.post(
 
 router.get(
   "/api/products",
-  authenticateToken,
+  authMiddleware.authenticateToken,
   productController.getAllProducts
 );
 
 router.get(
   "/api/products/:id",
-  authenticateToken,
+  authMiddleware.authenticateToken,
   productController.getProductById
 );
 
@@ -62,20 +63,28 @@ router.put(
 
 router.delete(
   "/api/products/:id",
-  authenticateToken,
+  authMiddleware.authenticateToken,
   productController.deleteProduct
 );
 
 router.post("/api/orders", orderController.createOrder);
-router.get("/api/orders", authenticateToken, orderController.getAllOrders);
-router.put("/api/orders/:id", authenticateToken, orderController.updateOrder);
+router.get(
+  "/api/orders",
+  authMiddleware.authenticateToken,
+  orderController.getAllOrders
+);
+router.put(
+  "/api/orders/:id",
+  authMiddleware.authenticateToken,
+  orderController.updateOrder
+);
 router.get("/api/delivery-statuses", orderController.getDeliveryStatus);
 router.get("/api/statuses", orderController.getStatus);
 // router.get("api/:id", orderController.getOrderById);
 
 router.get(
   "/api/payments",
-  authenticateToken,
+  authMiddleware.authenticateToken,
   paymentController.getAllPaymentsWithOrder
 );
 router.get("/api/payment-method", paymentController.getPaymentMethod);
@@ -83,19 +92,43 @@ router.get("/api/payment-statuses", paymentController.getStatus);
 router.post("/api/payments", paymentController.createPayment);
 router.put(
   "/api/payments/:id",
-  authenticateToken,
+  authMiddleware.authenticateToken,
   paymentController.updatePayment
 );
 router.delete(
   "/api/payments/:id",
-  authenticateToken,
+  authMiddleware.authenticateToken,
   paymentController.deletePayment
 );
 
 //Report
-router.get("/api/revenue", reportController.getRevenueReport);
+router.get(
+  "/api/revenue",
+  authMiddleware.authenticateToken,
+  authMiddleware.authorizeRoles("manager"),
+  reportController.getRevenueReport
+);
+
+//User
+router.get(
+  "/api/users",
+  // authMiddleware.authenticateToken,
+  // authMiddleware.authorizeRoles("manager"),
+  userController.getAllUsers
+);
+router.put(
+  "/api/users/:id",
+  authMiddleware.authenticateToken,
+  authMiddleware.authorizeRoles("manager"),
+  userController.updateUser
+);
+router.get("/api/role", userController.getRoles);
 
 // Home
-router.get("/api", dashboardController.getDashboardStats);
+router.get(
+  "/api",
+  authMiddleware.authenticateToken,
+  dashboardController.getDashboardStats
+);
 
 module.exports = router;

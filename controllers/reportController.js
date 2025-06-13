@@ -5,7 +5,7 @@ const getRevenueReport = async (req, res) => {
     const { startDate, endDate } = req.query;
     const start = new Date(startDate);
     const end = new Date(endDate);
-    end.setHours(23, 59, 59, 999); // Bao trùm hết ngày kết thúc
+    end.setHours(23, 59, 59, 999);
 
     const payments = await Payment.find({
       createdAt: { $gte: start, $lte: end },
