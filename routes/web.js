@@ -14,6 +14,8 @@ const authenticateToken = require("../middlewares/authMiddleware");
 const productController = require("../controllers/productController");
 const orderController = require("../controllers/orderController");
 const paymentController = require("../controllers/paymentController");
+const reportController = require("../controllers/reportController");
+const dashboardController = require("../controllers/dashboardController");
 
 // Multer config
 const storage = multer.diskStorage({
@@ -90,9 +92,10 @@ router.delete(
   paymentController.deletePayment
 );
 
+//Report
+router.get("/api/revenue", reportController.getRevenueReport);
+
 // Home
-router.get("/", (req, res) => {
-  res.send("Home Page");
-});
+router.get("/api", dashboardController.getDashboardStats);
 
 module.exports = router;
