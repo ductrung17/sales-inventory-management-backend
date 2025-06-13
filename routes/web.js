@@ -112,7 +112,7 @@ router.get(
 //User
 router.get(
   "/api/users",
-  // authMiddleware.authenticateToken,
+  authMiddleware.authenticateToken,
   // authMiddleware.authorizeRoles("manager"),
   userController.getAllUsers
 );
@@ -123,6 +123,12 @@ router.put(
   userController.updateUser
 );
 router.get("/api/role", userController.getRoles);
+router.get(
+  "/api/users/:id",
+  authMiddleware.authenticateToken,
+  // authMiddleware.authorizeRoles("manager"),
+  userController.getUserById
+);
 
 // Home
 router.get(

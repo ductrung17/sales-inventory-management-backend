@@ -1,5 +1,6 @@
 const Product = require("../models/Product");
-
+const fs = require("fs");
+const path = require("path");
 // Create
 // const createProduct = async (req, res) => {
 //   try {
@@ -45,9 +46,6 @@ const createProduct = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
-
-const fs = require("fs");
-const path = require("path");
 
 const updateProduct = async (req, res) => {
   try {
@@ -124,11 +122,25 @@ const getProductById = async (req, res) => {
 // Delete
 const deleteProduct = async (req, res) => {
   try {
-    const deleted = await Product.findByIdAndDelete(req.params.id);
-    if (!deleted) return res.status(404).json({ error: "Not found" });
-    res.json({ message: "Deleted successfully" });
+    const product = await Product.findById(req.params.id);
+    if (!product)
+      return res.status(404).json({ error: "Không tìm thấy sản phẩm" });
+
+    // Nếu sản phẩm có ảnh thì xóa ảnh khỏi thư mục uploads
+    if (product.image) {
+      const imagePath = path.join(__dirname, "..", product.image);
+      fs.unlink(imagePath, (err) => {
+        if (err) {
+          console.error("Không thể xóa ảnh sản phẩm:", err.message);
+        }
+      });
+    }
+
+    // Xóa sản phẩm khỏi cơ sở dữ liệu
+    await Product.findByIdAndDelete(req.params.id);
+    res.json({ message: "Đã xóa sản phẩm thành công" });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 

@@ -37,8 +37,18 @@ const getRoles = (req, res) => {
   res.json(rolesEnum);
 };
 
+const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: "Not found" });
+    res.json(user);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
 module.exports = {
   getAllUsers,
   updateUser,
   getRoles,
+  getUserById,
 };
