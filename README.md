@@ -45,5 +45,3 @@ backend/
 ├── uploads/          # Lưu ảnh sản phẩm
 └── server.js         # Điểm bắt đầu của ứng dụng
 ```
-
-> Ảnh sản phẩm sẽ được lưu ở thư mục `uploads`.
