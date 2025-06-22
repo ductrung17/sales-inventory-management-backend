@@ -10,6 +10,7 @@ Hệ thống API Node.js phục vụ quản lý sản phẩm, đơn hàng, ngư�
 - Multer (upload ảnh sản phẩm)
 - CORS, express-validator
 - PDFKit (xuất hóa đơn PDF)
+- Role-based Access Control
 
 ## ▶️ Khởi chạy backend
 
