@@ -67,6 +67,7 @@ router.delete(
   productController.deleteProduct
 );
 
+//Orders
 router.post("/api/orders", orderController.createOrder);
 router.get(
   "/api/orders",
@@ -80,8 +81,9 @@ router.put(
 );
 router.get("/api/delivery-statuses", orderController.getDeliveryStatus);
 router.get("/api/statuses", orderController.getStatus);
-// router.get("api/:id", orderController.getOrderById);
+router.get("/api/orders/:id", orderController.getOrderById);
 
+//Payment
 router.get(
   "/api/payments",
   authMiddleware.authenticateToken,
@@ -129,6 +131,8 @@ router.get(
   // authMiddleware.authorizeRoles("manager"),
   userController.getUserById
 );
+
+router.get("/api/payments/:id/invoice", paymentController.generateInvoice);
 
 // Home
 router.get(

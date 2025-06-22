@@ -82,15 +82,18 @@ const getStatus = (req, res) => {
 
 const getOrderById = async (req, res) => {
   try {
-    const order = await Order.findById(req.params.id);
+    const order = await Order.findById(req.params.id).populate(
+      "items.productId"
+    );
 
     if (!order) {
-      return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+      return res.status(404).json({ error: "Không tìm thấy đơn hàng." });
     }
 
     res.json(order);
   } catch (err) {
-    res.status(500).json({ message: "Lỗi server khi lấy đơn hàng" });
+    console.error("Lỗi khi lấy chi tiết đơn hàng:", err);
+    res.status(500).json({ error: "Lỗi server khi lấy chi tiết đơn hàng." });
   }
 };
 
